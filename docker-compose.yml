@@ -2,19 +2,14 @@ version: '3.7'
 services:
 
   redis-service:
-    build:
-      context: ./redis-server
-      dockerfile: Dockerfile
+    image: tobyhferguson/redis-microservices-demo_redis-service 
     ports:
       - "6379:6379"
     networks:
       - redis-microservices-network
-    restart: always
 
   mysql-debezium-service:
-    build:
-      context: ./mysql-database
-      dockerfile: Dockerfile
+    image: tobyhferguson/redis-microservices-demo_mysql-debezium-service
     ports:
       - "3306:3306"
     environment:
@@ -23,50 +18,38 @@ services:
       - MYSQL_PASSWORD=mysqlpw
     networks:
       - redis-microservices-network
-    restart: always
 
   db-to-streams-service:
-    build:
-      context: ./db-to-streams-service
-      dockerfile: Dockerfile
+    image: tobyhferguson/redis-microservices-demo_db-to-streams-service
     ports:
       - "8082:8082"
     networks:
       - redis-microservices-network
-    restart: always
     depends_on:
       - mysql-debezium-service
       - redis-service
 
   streams-to-redisgraph-service:
-    build:
-      context: ./streams-to-redisgraph-service
-      dockerfile: Dockerfile
+    image: tobyhferguson/redis-microservices-demo_streams-to-redisgraph-service
     ports:
       - "8083:8083"
     networks:
       - redis-microservices-network
-    restart: always
     depends_on:
       - mysql-debezium-service
       - redis-service
 
   sql-rest-api:
-    build:
-      context: ./sql-rest-api
-      dockerfile: Dockerfile
+    image: tobyhferguson/redis-microservices-demo_sql-rest-api
     ports:
       - "8081:8081"
     networks:
       - redis-microservices-network
     depends_on:
       - mysql-debezium-service
-    restart: always
 
   caching-service:
-    build:
-      context: ./caching-service
-      dockerfile: Dockerfile
+    image: tobyhferguson/redis-microservices-demo_caching-service
     ports:
       - "8084:8084"
     networks:
@@ -74,38 +57,29 @@ services:
     depends_on:
       - mysql-debezium-service
       - redis-service
-    restart: always
 
   streams-to-redisearch-service:
-    build:
-      context: ./streams-to-redisearch-service
-      dockerfile: Dockerfile
+    image: tobyhferguson/redis-microservices-demo_streams-to-redisearch-service
     ports:
       - "8085:8085"
     networks:
       - redis-microservices-network
     depends_on:
       - redis-service
-    restart: always
 
   ws-notifications-service:
-      build:
-        context: ./notifications-service-node
-        dockerfile: Dockerfile
+      image: tobyhferguson/redis-microservices-demo_ws-notifications-service
       ports:
         - "8888:8888"
       networks:
         - redis-microservices-network
       depends_on:
         - redis-service
-      restart: always
       
   front-end:
-    build:
-      context: ./ui-redis-front-end/redis-front
-      dockerfile: Dockerfile
+    image: tobyhferguson/redis-microservices-demo_front-end
     ports:
-      - "8080:80"
+      - "8080:8080"
     networks:
       - redis-microservices-network
     depends_on:
@@ -116,8 +90,6 @@ services:
       - db-to-streams-service
       - caching-service
       - sql-rest-api
-    restart: always
 
 networks:
   redis-microservices-network:
-    driver: bridge
