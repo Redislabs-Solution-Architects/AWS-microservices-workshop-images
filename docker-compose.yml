@@ -67,15 +67,6 @@ services:
     depends_on:
       - redis-service
 
-  ws-notifications-service:
-      image: tobyhferguson/redis-microservices-demo_ws-notifications-service
-      ports:
-        - "8888:8888"
-      networks:
-        - redis-microservices-network
-      depends_on:
-        - redis-service
-      
   front-end:
     image: tobyhferguson/redis-microservices-demo_front-end
     ports:
