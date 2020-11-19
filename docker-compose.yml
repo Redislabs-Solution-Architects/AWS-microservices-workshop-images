@@ -70,7 +70,7 @@ services:
   front-end:
     image: tobyhferguson/redis-microservices-demo_front-end
     ports:
-      - "8080:8080"
+      - "80:80"
     networks:
       - redis-microservices-network
     depends_on:
