@@ -2,6 +2,9 @@ version: '3.7'
 services:
 
   redis-service:
+    build:
+      context: ./redis-server
+      dockerfile: Dockerfile
     image: tobyhferguson/redis-microservices-demo_redis-service 
     ports:
       - "6379:6379"
@@ -9,6 +12,9 @@ services:
       - redis-microservices-network
 
   mysql-debezium-service:
+    build:
+      context: ./mysql-database
+      dockerfile: Dockerfile
     image: tobyhferguson/redis-microservices-demo_mysql-debezium-service
     ports:
       - "3306:3306"
@@ -20,6 +26,9 @@ services:
       - redis-microservices-network
 
   db-to-streams-service:
+    build:
+      context: ./db-to-streams-service
+      dockerfile: Dockerfile
     image: tobyhferguson/redis-microservices-demo_db-to-streams-service
     ports:
       - "8082:8082"
@@ -30,6 +39,9 @@ services:
       - redis-service
 
   streams-to-redisgraph-service:
+    build:
+      context: ./streams-to-redisgraph-service
+      dockerfile: Dockerfile
     image: tobyhferguson/redis-microservices-demo_streams-to-redisgraph-service
     ports:
       - "8083:8083"
@@ -40,6 +52,9 @@ services:
       - redis-service
 
   sql-rest-api:
+    build:
+      context: ./sql-rest-api
+      dockerfile: Dockerfile
     image: tobyhferguson/redis-microservices-demo_sql-rest-api
     ports:
       - "8081:8081"
@@ -49,6 +64,9 @@ services:
       - mysql-debezium-service
 
   caching-service:
+    build:
+      context: ./caching-service
+      dockerfile: Dockerfile
     image: tobyhferguson/redis-microservices-demo_caching-service
     ports:
       - "8084:8084"
@@ -59,6 +77,9 @@ services:
       - redis-service
 
   streams-to-redisearch-service:
+    build:
+      context: ./streams-to-redisearch-service
+      dockerfile: Dockerfile
     image: tobyhferguson/redis-microservices-demo_streams-to-redisearch-service
     ports:
       - "8085:8085"
@@ -71,6 +92,7 @@ services:
     build:
       context: ./comments-service
       dockerfile: Dockerfile
+    image: tobyhferguson/redis-microservices-demo_comments-service
     ports:
       - "8086:8086"
     networks:
@@ -80,6 +102,9 @@ services:
     restart: always
 
   front-end:
+    build:
+      context: ./ui-redis-front-end/redis-front
+      dockerfile: Dockerfile
     image: tobyhferguson/redis-microservices-demo_front-end
     ports:
       - "80:80"
