@@ -1,0 +1,14 @@
+version: '3.7'
+services:
+  publish_cfn:
+    build: ./publish_cfn
+    image: jq_aws:latest
+    command: /src/jq_filter /src/ecs.json s3://aws-workshop-cfn.redislabs.com
+    volumes:
+      - ".:/src"
+      - "$HOME/.aws:/root/.aws"
+    environment:
+      - AWS_PROFILE
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_ACCESS_KEY_ID
+      - AWS_REGION

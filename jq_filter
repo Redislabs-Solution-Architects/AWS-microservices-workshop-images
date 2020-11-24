@@ -1,0 +1,41 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Metadata": {
+	"AWS::CloudFormation::Interface": {
+	    "ParameterGroups": [
+		{
+		    "Label": {
+			"default": "Network Configuration"
+		    },
+		    "Parameters": [
+			"VPCId",
+			"SubnetId"
+		    ]
+		}
+	    ]
+	}
+    },
+    "Parameters": {
+	"SubnetId": {
+	    "Type": "AWS::EC2::Subnet::Id",
+	    "Description": "Choose a subnet within the VPC you've chosen"
+	},
+	"VPCId": {
+	    "Type": "AWS::EC2::VPC::Id"
+	}
+    },
+    Resources,
+    "Outputs": {
+    "ApplicationURL": {
+      "Description": "The Applications URL",
+      "Value": { "Fn::Sub": "http://${LoadBalancer.DNSName}" }
+    }
+  }
+} |
+    walk(if type == "object" then with_entries(if .key == "Subnets" then .value |= [{"Ref": "SubnetId"}]
+ else . end) else . end)  |
+    walk(if type == "object" then with_entries(if .key == "VpcId" or .key == "Vpc" then .value |= { "Ref": "VPCId" } else . end) else . end) |
+    walk(if type == "object" then with_entries(if .key == "Version" then .value |= "2012-10-17" else . end) else . end) 
+
+
+
