@@ -26,11 +26,27 @@
     },
     Resources,
     "Outputs": {
-    "ApplicationURL": {
-      "Description": "The Applications URL",
-      "Value": { "Fn::Sub": "http://${LoadBalancer.DNSName}" }
+	"ApplicationURL": {
+	    "Description": "The Application's URL",
+	    "Value": { "Fn::Sub": "http://${LoadBalancer.DNSName}" }
+	},
+	"RedisInsightUrl": {
+	    "Description": "URL to access RedisInsight",
+	    "Value": { "Fn::Sub": "http://${LoadBalancer.DNSName}:8001" }
+	},
+	"Host": {
+	    "Description": "Hostname to be used to configure database access",
+	    "Value": { "Fn::Sub": "${LoadBalancer.DNSName}" }
+	},
+	"Name": {
+	    "Description": "Name of database",
+	    "Value": "redis-service"
+	},
+	"Port": {
+	    "Description": "Database port",
+	    "Value": "6379"
+	}
     }
-  }
 } |
     walk(if type == "object" then with_entries(if .key == "Subnets" then .value |= [{"Ref": "SubnetId"}]
  else . end) else . end)  |

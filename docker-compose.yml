@@ -1,6 +1,15 @@
 version: '3.7'
 services:
 
+  redisinsight:
+    image: redislabs/redisinsight
+    ports:
+      - "8001:8001"
+    networks:
+      - redis-microservices-network
+    depends_on:
+      - redis-service
+
   redis-service:
     build:
       context: ./redis-server
