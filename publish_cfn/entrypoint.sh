@@ -4,4 +4,4 @@
     exit 1
     }
 jq -f $1 $2 >cfn.json &&
-    aws s3 cp cfn.json $3
+    aws s3 cp cfn.json ${PUBLISH_LOCATION:-$3}

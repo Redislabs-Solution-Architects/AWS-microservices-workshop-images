@@ -59,6 +59,8 @@ docker run --rm -i -v "${PWD}":/workdir mikefarah/yq yq -j r --prettyPrint - > e
 
 Finally, clean this up (replacing VPC and Subnet references with parameters) and publish a cloud formation template to `https://s3.amazonaws.com/aws-workshop.redislabs.com/cfn.json`
 
+(If the `PUBLISH_LOCATION` envar is set then its value will be used as the publication location instead)
+
 ```
 docker-compose -f dc.yml run publish_cfn
 ```
