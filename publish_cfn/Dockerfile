@@ -6,6 +6,6 @@ COPY . /usr/bin
 
 RUN chmod +x /usr/bin/*
 
-
+WORKDIR /src
 ENTRYPOINT ["/usr/bin/entrypoint.sh"]
 
