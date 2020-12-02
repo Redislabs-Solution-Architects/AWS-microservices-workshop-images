@@ -14,7 +14,7 @@ services:
     build:
       context: ./redis-server
       dockerfile: Dockerfile
-    image: tobyhferguson/app-redis
+    image: public.ecr.aws/i9l0l1r7/aws-workshop/app-redis
     ports:
       - "6379:6379"
     networks:
@@ -24,7 +24,7 @@ services:
     build:
       context: ./mysql-database
       dockerfile: Dockerfile
-    image: tobyhferguson/app-mysql
+    image: public.ecr.aws/i9l0l1r7/aws-workshop/app-mysql
     ports:
       - "3306:3306"
     environment:
@@ -38,7 +38,7 @@ services:
     build:
       context: ./db-to-streams-service
       dockerfile: Dockerfile
-    image: tobyhferguson/app-db-to-streams
+    image: public.ecr.aws/i9l0l1r7/aws-workshop/app-db-to-streams
     ports:
       - "8082:8082"
     environment:
@@ -55,7 +55,7 @@ services:
     build:
       context: ./streams-to-redisgraph-service
       dockerfile: Dockerfile
-    image: tobyhferguson/app-streams-to-graph
+    image: public.ecr.aws/i9l0l1r7/aws-workshop/app-streams-to-graph
     ports:
       - "8083:8083"
     environment:
@@ -72,7 +72,7 @@ services:
     build:
       context: ./sql-rest-api
       dockerfile: Dockerfile
-    image: tobyhferguson/app-sql-rest-api
+    image: public.ecr.aws/i9l0l1r7/aws-workshop/app-sql-rest-api
     ports:
       - "8081:8081"
     environment:
@@ -89,7 +89,7 @@ services:
     build:
       context: ./caching-service
       dockerfile: Dockerfile
-    image: tobyhferguson/app-caching
+    image: public.ecr.aws/i9l0l1r7/aws-workshop/app-caching
     ports:
       - "8084:8084"
     environment:
@@ -107,7 +107,7 @@ services:
     build:
       context: ./streams-to-redisearch-service
       dockerfile: Dockerfile
-    image: tobyhferguson/app-streams-to-redis-hashes
+    image: public.ecr.aws/i9l0l1r7/aws-workshop/app-streams-to-redis-hashes
     ports:
       - "8085:8085"
     environment:
@@ -124,7 +124,7 @@ services:
     build:
       context: ./comments-service
       dockerfile: Dockerfile
-    image: tobyhferguson/app-comments
+    image: public.ecr.aws/i9l0l1r7/aws-workshop/app-comments
     ports:
       - "8086:8086"
     environment:
@@ -157,7 +157,7 @@ services:
     build:
       context: ./ui-redis-front-end/redis-front
       dockerfile: Dockerfile
-    image: tobyhferguson/app-frontend
+    image: public.ecr.aws/i9l0l1r7/aws-workshop/app-frontend
     ports:
       - "80:80"
     networks:

@@ -8,14 +8,34 @@ You can use the following link to launch the ECS cluster with the associated ser
 
 ## Building (Developers only)
 ### Images
-If you've changed the images then you need to build them and push them to the repository:
+If you've changed the images then you need to build them and push them to the repository. 
+This is far quicker to do if you do this on an AWS image and push from there, rather than push from your laptop
 
+### Build the images
 ```
 mvn clean package &&
-docker-compose build --force-rm --pull --parallel &&
+docker-compose build --force-rm --pull --parallel
+```
+
+### Authenticate to the public registry
+
+```
+aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+```
+
+### Push to the registry
+
+```
 docker-compose push
 ```
+
+
 ### Cloudformation Template
+NOTE - I could only get this to work on my Mac (Docker version
+19.03.13, build 4484c46d9d) - using a RHEL 8 AWS image the docker
+installed (Docker version 19.03.14, build 5eb3275d40) didn't support
+creating an ECS context. I'm hoping this is a temporary bug!
+
 First, create an ECS context call `redislabs` (you'll only need to do this once):
 
 ```
@@ -42,6 +62,34 @@ This uses the standard aws-cli techniques for finding the credentials so you mig
 
 (If you see: `upload failed: ./cfn.json to s3://aws-workshop.redislabs.com/cfn.json Unable to locate credentials` then you *definitely* need to do that export described above!)
 
+### Dev on an AWS image
+I tried to do this using Cloud9 but couldn't configure the Docker storage properly. So I'm using an m5a.2xlarge instance (32GiB, 8CPU) running RHEL8 
+
+I configured it thus:
+
+```
+# On RHEL 8
+sudo dnf -y install java maven git python3-pip
+
+## Docker from: https://linuxconfig.org/how-to-install-docker-in-rhel-8
+sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+sudo dnf -y install --nobest docker-ce
+sudo systemctl disable firewalld
+sudo systemctl enable --now docker
+
+## docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+## awscli
+sudo dnf -y install python3-pip
+pip3 install awscli --upgrade --user
+
+## Software
+git clone https://github.com/TobyHFerguson/redis-microservices-demo.git
+cd redis-microservices-demo/
+mvn clean package && docker-compose build
+```
 
 
 ----------
