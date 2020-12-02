@@ -9,7 +9,7 @@ You can use the following link to launch the ECS cluster with the associated ser
 ## Building (Developers only)
 ### Images
 If you've changed the images then you need to build them and push them to the repository. 
-This is far quicker to do if you do this on an AWS image and push from there, rather than push from your laptop
+This is far quicker to do if you do this on an AWS image and push from there, rather than push from your laptop.
 
 ### Build the images
 ```
@@ -28,7 +28,6 @@ aws ecr-public get-login-password --region us-east-1 | docker login --username A
 ```
 docker-compose push
 ```
-
 
 ### Cloudformation Template
 NOTE - I could only get this to work on my Mac (Docker version
