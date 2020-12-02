@@ -8,13 +8,27 @@ You can use the following link to launch the ECS cluster with the associated ser
 
 ## Building (Developers only)
 ### Images
-If you've changed the images then you need to build them and push them to the repository:
+If you've changed the images then you need to build them and push them to the repository. 
+This is far quicker to do if you do this on an AWS image and push from there, rather than push from your laptop.
 
+### Build the images
 ```
 mvn clean package &&
-docker-compose build --force-rm --pull --parallel &&
+docker-compose build --force-rm --pull --parallel
+```
+
+### Authenticate to the public registry
+
+```
+aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+```
+
+### Push to the registry
+
+```
 docker-compose push
 ```
+
 ### Cloudformation Template
 First, create an ECS context call `redislabs` (you'll only need to do this once):
 
