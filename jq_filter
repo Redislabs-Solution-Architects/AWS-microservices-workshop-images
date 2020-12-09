@@ -1,31 +1,99 @@
-{
-  "AWSTemplateFormatVersion": "2010-09-09",
-  "Metadata": {
-	"AWS::CloudFormation::Interface": {
-	    "ParameterGroups": [
-		{
-		    "Label": {
-			"default": "Network Configuration"
-		    },
-		    "Parameters": [
-			"VPCId",
-			"SubnetId"
-		    ]
-		}
-	    ]
-	}
-    },
-    "Parameters": {
-	"SubnetId": {
-	    "Type": "AWS::EC2::Subnet::Id",
-	    "Description": "Choose a subnet within the VPC you've chosen"
-	},
-	"VPCId": {
-	    "Type": "AWS::EC2::VPC::Id"
-	}
-    },
-    Resources,
-    "Outputs": {
+. + { AWSTemplateFormatVersion: "2010-09-09", 
+      Mappings:  {
+    SubnetConfig: {
+      VPC: {
+        CIDR: "10.0.0.0/16"
+      },
+      Public: {
+        CIDR: "10.0.0.0/24"
+      }
+    }
+  } } |
+.Resources +=   {
+	  "VPC" : {
+            "Type" : "AWS::EC2::VPC",
+            "Properties" : {
+                "EnableDnsSupport" : "true",
+                "EnableDnsHostnames" : "true",
+                "CidrBlock" : { "Fn::FindInMap" : [ "SubnetConfig", "VPC", "CIDR" ]}
+            }
+        },
+
+        "PublicSubnet" : {
+            "Type" : "AWS::EC2::Subnet",
+            "Properties" : {
+                "VpcId" : { "Ref" : "VPC" },
+                "CidrBlock" : { "Fn::FindInMap" : [ "SubnetConfig", "Public", "CIDR" ]}
+            }
+        },
+
+        "InternetGateway" : {
+            "Type" : "AWS::EC2::InternetGateway"
+        },
+        "VPCGatewayAttachment" : {
+            "Type" : "AWS::EC2::VPCGatewayAttachment",
+            "Properties" : {
+                "VpcId" : { "Ref" : "VPC" },
+                "InternetGatewayId" : { "Ref" : "InternetGateway" }
+            }
+        },
+        "PublicRouteTable" : {
+            "Type" : "AWS::EC2::RouteTable",
+            "Properties" : {
+                "VpcId" : { "Ref" : "VPC" }
+            }
+        },
+        "PublicRoute" : {
+            "Type" : "AWS::EC2::Route",
+            "DependsOn" : "VPCGatewayAttachment",
+            "Properties" : {
+                "RouteTableId" : { "Ref" : "PublicRouteTable" },
+                "DestinationCidrBlock" : "0.0.0.0/0",
+                "GatewayId" : { "Ref" : "InternetGateway" }
+            }
+        },
+        "PublicSubnetRouteTableAssociation" : {
+            "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties" : {
+                "SubnetId" : { "Ref" : "PublicSubnet" },
+                "RouteTableId" : { "Ref" : "PublicRouteTable" }
+            }
+        },
+        "PublicSubnetNetworkAclAssociation" : {
+            "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+            "Properties" : {
+                "SubnetId" : { "Ref" : "PublicSubnet" },
+                "NetworkAclId" : { "Fn::GetAtt" : ["VPC", "DefaultNetworkAcl"] }
+            }
+        },
+        "WebServerSecurityGroup" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+                "GroupDescription" : "Enable HTTP ingress",
+                "VpcId" : { "Ref" : "VPC" },
+                "SecurityGroupIngress" : [ { 
+                    "IpProtocol" : "tcp",
+                    "FromPort" : "80",  
+                    "ToPort" : "80",
+                    "CidrIp" : "0.0.0.0/0"
+                } ]
+            }
+        },
+        "RedisInsightsSecurityGroup" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+                "GroupDescription" : "Enable HTTP ingress for RedisInsights",
+                "VpcId" : { "Ref" : "VPC" },
+                "SecurityGroupIngress" : [ { 
+                    "IpProtocol" : "tcp",
+                    "FromPort" : "8001",  
+                    "ToPort" : "8001",
+                    "CidrIp" : "0.0.0.0/0"
+                } ]
+            }
+        }
+	} | 
+. +     { Outputs : {
 	"ApplicationURL": {
 	    "Description": "The Application's URL",
 	    "Value": { "Fn::Sub": "http://${LoadBalancer.DNSName}" }
@@ -36,7 +104,7 @@
 	},
 	"Host": {
 	    "Description": "Hostname to be used to configure database access",
-	    "Value": { "Fn::Sub": "${LoadBalancer.DNSName}" }
+	    "Value": { "Fn::Sub": "${AppredisServiceDiscoveryEntry.Name}.redismicroservicesdemo.local" }
 	},
 	"Name": {
 	    "Description": "Name of database",
@@ -46,11 +114,10 @@
 	    "Description": "Database port",
 	    "Value": "6379"
 	}
-    }
-} |
-    walk(if type == "object" then with_entries(if .key == "Subnets" then .value |= [{"Ref": "SubnetId"}]
+    } } |
+    walk(if type == "object" then with_entries(if .key == "Subnets" then .value |= [{"Ref": "PublicSubnet"}]
  else . end) else . end)  |
-    walk(if type == "object" then with_entries(if .key == "VpcId" or .key == "Vpc" then .value |= { "Ref": "VPCId" } else . end) else . end) |
+    walk(if type == "object" then with_entries(if .key == "VpcId" or .key == "Vpc" then .value |= { "Ref": "VPC" } else . end) else . end) |
     walk(if type == "object" then with_entries(if .key == "Version" then .value |= "2012-10-17" else . end) else . end) 
 
 
