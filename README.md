@@ -1,4 +1,14 @@
-# Microservices with Redis
+# Microservices Workshop Images - Project Intro
+
+This project provides the images to be used with the AWS-microservices-workshop-hugo project, which is the workshop documentation that will consume the images produced here.
+
+This project was originally forked from Tug Grall's Microservices Demo and the intention is to continue to track that demo closely.
+
+This project produces Docker images that can be run using docker, AWS Elastic Container Service (ECS) or Kubernetes.
+
+At this time (2020-12-15) this project has focused on the AWS ECS approach, and hasn't actually tested out Kubernetes on AWS. 
+
+# Original Intro to Microservices Demo
 
 This project shows how you can modernize a legacy application that use RDBMS with Redis.
 
