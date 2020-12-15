@@ -1,8 +1,8 @@
 # Microservices Workshop Images - Project Intro
 
-This project provides the images to be used with the AWS-microservices-workshop-hugo project, which is the workshop documentation that will consume the images produced here.
+This project provides the images to be used with the [AWS-microservices-workshop-hugo project](https://github.com/Redislabs-Solution-Architects/AWS-microservices-workshop-hugo), which is the workshop documentation that will consume the images produced here.
 
-This project was originally forked from Tug Grall's Microservices Demo and the intention is to continue to track that demo closely.
+This project was originally forked from [Tug Grall's Microservices Demo](https://github.com/redis-developer/redis-microservices-demo) and the intention is to continue to track that project closely.
 
 This project produces Docker images that can be run using docker, AWS Elastic Container Service (ECS) or Kubernetes.
 
