@@ -7,6 +7,11 @@ You can use the following link to launch the ECS cluster with the associated ser
 <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=aws-cfn&templateURL=https://s3.amazonaws.com/aws-workshop-cfn.redislabs.com/cfn.json"><MiG src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"></a>
 
 ## Building (Developers only)
+There are two sets of artifacts that we build:
+
+1. A set of images, which need to be built and then pushed to a public Elastic Container Repository
+2. A Cloudformation template which references the images
+
 ### Prerequisites
 We expect you to have:
 
@@ -22,7 +27,6 @@ installed.
 The image build process uses the `docker-compose.yml` file. Note that the ECR is hard-coded in there as `public.ecr.aws/i9l0l1r7`, which is owned by Redis Labs. As such you'll need to be a Redis Labs employee to push images to that repository.
 
 ### Images
-The images
 If you've changed the images then you need to build them and push them to the repository. 
 This is far quicker to do if you do this on an AWS image and push from there, rather than push from your laptop.
 
@@ -44,33 +48,45 @@ Then you can push the images to the actual repository:
 docker-compose push
 ```
 
-#### (Incomplete) Notes about Developing on an AWS image
-I tried to do this using Cloud9 but couldn't configure the Docker storage properly. So I'm using an m5a.2xlarge instance (32GiB, 8CPU) running RHEL8 
+#### Notes about building on an AWS image
+I tried to do this using Cloud9 but couldn't configure the Docker storage properly. So I'm using an m5a.2xlarge instance (32GiB, 8CPU) running Amazon Linux 2
 
 I configured it thus:
 
 ```
-# On RHEL 8
-sudo dnf -y install java maven git python3-pip
+# On AWS 2
+sudo yum update -y
 
-## Docker from: https://linuxconfig.org/how-to-install-docker-in-rhel-8
-sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
-sudo dnf -y install --nobest docker-ce
-sudo systemctl disable firewalld
-sudo systemctl enable --now docker
+sudo yum -y install java maven git 
+
+# Install docker
+sudo amazon-linux-extras install -y docker
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+
+# Pick up the new group
+sudo -i su - ec2-user
 
 ## docker-compose
 sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
 ## awscli
-sudo dnf -y install python3-pip
-pip3 install awscli --upgrade --user
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
 
 ## Software
-git clone https://github.com/TobyHFerguson/redis-microservices-demo.git
-cd redis-microservices-demo/
-mvn clean package && docker-compose build
+git clone https://github.com/Redislabs-Solution-Architects/AWS-microservices-workshop-images.git
+cd AWS-microservices-workshop-images/
+
+## Build/Push
+mvn clean package && docker-compose build --force-rm --pull --parallel
+export AWS_ACCESS_KEY_ID=XXXXX
+export AWS_SECRET_ACCESS_KEY=XXXXX
+aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+docker-compose push
 ```
 
 ### Cloudformation Template
