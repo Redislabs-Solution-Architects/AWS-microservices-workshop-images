@@ -4,7 +4,7 @@ You can run this system on [AWS ECS]. This works by using a [Cloudformation] sta
 
 You can use the following link to launch the ECS cluster with the associated services. It should take around 6-10 mins to deploy the stack. (Note that this **WILL NOT WORK** if launched in the `us-east-1` region. It hangs forever, for some reason):
 
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=aws-cfn&templateURL=https://s3.amazonaws.com/aws-workshop-cfn.redislabs.com/cfn.json"><MiG src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"></a>
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=aws-cfn&templateURL=https://s3.amazonaws.com/aws-workshop-cfn.redislabs.com/cfn.json"><image src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"></a>
 
 ## Building (Developers only)
 There are two sets of artifacts that we build:
